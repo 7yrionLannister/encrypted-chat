@@ -3,7 +3,6 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Scanner;
@@ -12,8 +11,8 @@ import javax.crypto.spec.*;
 
 public class Client {
 
-	public static final BigInteger G = new BigInteger("59");
-	public static final BigInteger P = new BigInteger("3049761456087");
+	public static final BigInteger G = new BigInteger("586");
+	public static final BigInteger P = new BigInteger("3049");
 	public static final String algorithm = "AES/CBC/PKCS5Padding";
 
 	private BigInteger a; // The random number chosen by the client for the Diffie-Hellman algorithm
@@ -147,9 +146,7 @@ public class Client {
 
 		BigInteger Xb = new BigInteger(bufferedReader.readLine());
 		Ka = calculatePower(Xb, a, P);
-		if (Ka.intValue() > 0) {
-			System.out.println("Diffie-Hellman done!");			
-		}
+		System.out.println("Diffie-Hellman done!");
     }
 
     /**
@@ -159,16 +156,14 @@ public class Client {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				String msgFromGroupChat;
-				// While there is still a connection with the server, continue to listen for
-				// messages on a separate thread.
+				String msgFromChat;
+				
 				while (peerSocket.isConnected()) {
 					try {
-						// Get the messages sent from other users and print it to the console.
-						msgFromGroupChat = bufferedReader.readLine();
-						String decryptedText = decryptMessage(msgFromGroupChat, secretKey, iv);
-						System.out.println("Cipher text - " + msgFromGroupChat);
-						System.out.println("Plain text - " + decryptedText);
+						msgFromChat = bufferedReader.readLine();
+						String decryptedText = decryptMessage(msgFromChat, secretKey, iv);
+						System.out.println("\tCipher text - " + msgFromChat);
+						System.out.println("\tPlain text - " + decryptedText);
 					} catch (IOException e) {
 						// Close everything gracefully.
 						closeEverything(peerSocket, bufferedReader, bufferedWriter);
@@ -187,16 +182,6 @@ public class Client {
 	 * @param bufferedWriter - the output stream
 	 */
 	public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
-		// Note you only need to close the outer wrapper as the underlying streams are
-		// closed when you close the wrapper.
-		// Note you want to close the outermost wrapper so that everything gets flushed.
-		// Note that closing a socket will also close the socket's InputStream and
-		// OutputStream.
-		// Closing the input stream closes the socket. You need to use shutdownInput()
-		// on socket to just close the input stream.
-		// Closing the socket will also close the socket's input stream and output
-		// stream.
-		// Close the socket after closing the streams.
 		try {
 			if (bufferedReader != null) {
 				bufferedReader.close();

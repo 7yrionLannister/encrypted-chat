@@ -8,9 +8,7 @@ import java.util.Scanner;
 public class MainChat {
 
 	public static void main(String[] args) {
-		try {
-			System.out.println("Que bonito día no joda");
-			
+		try {			
 			String host = args[0];
 			int port = Integer.parseInt(args[1]);
 			String peerHost = args[2];
